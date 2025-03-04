@@ -1,3 +1,5 @@
+let cart = [];
+let currentUser = null;
 function displayProducts(category = 'all') {
     console.log(products)
     const productsContainer = document.getElementById('products-container');
@@ -37,14 +39,7 @@ function displayProducts(category = 'all') {
     });
 }
 
-// Filter products
-document.querySelectorAll('.filter-btn').forEach(button => {
-    button.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-        this.classList.add('active');
-        displayProducts(this.getAttribute('data-filter'));
-    });
-});
+
 
 // Add to cart function
 function addToCart(productId) {
@@ -198,17 +193,7 @@ function updateQuantity(productId, change) {
     }
 }
 
-// Checkout functionality
-document.getElementById('checkout-btn').addEventListener('click', function() {
-    if (!currentUser) {
-        // Show login modal if user is not logged in
-        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-        loginModal.show();
-    } else {
-        // Proceed to payment
-        showPaymentModal();
-    }
-});
+
 
 // Show payment modal
 function showPaymentModal() {
@@ -233,38 +218,4 @@ function showPaymentModal() {
     paymentModal.show();
 }
 
-// Process payment
-document.getElementById('pay-now-btn').addEventListener('click', function() {
-    // Simple validation of payment fields
-    const form = document.getElementById('payment-form');
-    const cardName = document.getElementById('card-name').value.trim();
-    const cardNumber = document.getElementById('card-number').value.trim();
-    const expiryDate = document.getElementById('expiry-date').value.trim();
-    const cvv = document.getElementById('cvv').value.trim();
-    const billingAddress = document.getElementById('billing-address').value.trim();
 
-    if (!cardName || !cardNumber || !expiryDate || !cvv || !billingAddress) {
-        alert('Please fill in all payment details!');
-        return;
-    }
-
-    // Simulate payment processing
-    setTimeout(() => {
-        // Hide payment modal
-        const paymentModalEl = document.getElementById('paymentModal');
-        const paymentModalInstance = bootstrap.Modal.getInstance(paymentModalEl);
-        paymentModalInstance.hide();
-
-        // Generate a fake order number
-        const orderNumber = 'ORD' + Math.floor(Date.now() / 1000);
-        document.getElementById('order-number').textContent = orderNumber;
-
-        // Show order confirmation modal
-        const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
-        confirmationModal.show();
-
-        // Clear cart after successful payment and update UI
-        cart = [];
-        updateCartUI();
-    }, 1000);
-});

@@ -3,33 +3,22 @@ let products = [];
 let currentProductId = 1;
 let selectedProductId = null;
 
-// Fetch products data
+// Fetch products data from the API
 function fetchProducts() {
-    // Replace with actual API call
-    fetch('http://localhost:5000/api/products/test')
+    fetch('http://localhost:5000/api/products')
         .then(response => response.json())
         .then(data => {
             console.log('Fetched products:', data);
             products = data;
-            
-            // If API doesn't provide IDs, add them
-            products.forEach((product, index) => {
-                if (!product.id) {
-                    product.id = index + 1;
-                }
-                if (!product.stock) {
-                    product.stock = Math.floor(Math.random() * 100) + 1; // Random stock for demo
-                }
-            });
-            
-            currentProductId = Math.max(...products.map(p => p.id)) + 1;
-            displayProducts();
+            // Update currentProductId to be one greater than the highest id
+            currentProductId = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
+            displayProducts(document.getElementById('category-filter').value);
         })
         .catch(error => {
             console.error('Error fetching products:', error);
-            // Use sample data if API fails
+            // Optionally, use sample data in case of error
             useSampleData();
-            displayProducts();
+            displayProducts(document.getElementById('category-filter').value);
         });
 }
 
@@ -116,7 +105,7 @@ function displayProducts(category = 'all') {
                 ${!product.active ? '<span class="badge bg-secondary ms-1">Inactive</span>' : ''}
             </td>
             <td><span class="badge category-badge">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</span></td>
-            <td>$${product.price.toFixed(2)}</td>
+            <td>$${product.price}</td>
             <td>${product.stock} units</td>
             <td class="action-buttons">
                 <button class="btn btn-sm btn-primary edit-product" data-id="${product.id}">
@@ -189,7 +178,7 @@ document.getElementById('search-products').addEventListener('input', function() 
                     ${!product.active ? '<span class="badge bg-secondary ms-1">Inactive</span>' : ''}
                 </td>
                 <td><span class="badge category-badge">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</span></td>
-                <td>$${product.price.toFixed(2)}</td>
+                <td>$${product.price}</td>
                 <td>${product.stock} units</td>
                 <td class="action-buttons">
                     <button class="btn btn-sm btn-primary edit-product" data-id="${product.id}">
@@ -255,7 +244,7 @@ document.getElementById('edit-product-image').addEventListener('change', functio
     }
 });
 
-// Save new product
+// Save new product using API
 document.getElementById('save-product-btn').addEventListener('click', function() {
     const name = document.getElementById('product-name').value.trim();
     const category = document.getElementById('product-category').value;
@@ -276,8 +265,6 @@ document.getElementById('save-product-btn').addEventListener('click', function()
     let imageUrl = 'https://via.placeholder.com/300?text=' + encodeURIComponent(name);
     const imageInput = document.getElementById('product-image');
     if (imageInput.files && imageInput.files[0]) {
-        // In a real app, you would upload the image to a server and get a URL
-        // For this demo, we'll use a data URL (not efficient for production)
         const reader = new FileReader();
         reader.onload = function(e) {
             imageUrl = e.target.result;
@@ -289,9 +276,7 @@ document.getElementById('save-product-btn').addEventListener('click', function()
     }
     
     function completeAddProduct() {
-        // Create new product object
         const newProduct = {
-            id: currentProductId++,
             name,
             category,
             price,
@@ -302,23 +287,36 @@ document.getElementById('save-product-btn').addEventListener('click', function()
             active,
             image: imageUrl
         };
-        
-        // Add to products array
-        products.push(newProduct);
-        
-        // Close modal
-        const modal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
-        modal.hide();
-        
-        // Reset form
-        document.getElementById('add-product-form').reset();
-        document.getElementById('image-preview').src = 'https://via.placeholder.com/150';
-        
-        // Refresh product list
-        displayProducts(document.getElementById('category-filter').value);
-        
-        // Show success message
-        showToast('Product Added', `${name} has been successfully added.`);
+        // POST new product to API
+        fetch('http://localhost:5000/api/products', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newProduct)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error creating product');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Optionally, add the returned product to the local array
+            products.push(data);
+            // Close modal and reset form
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addProductModal'));
+            modal.hide();
+            document.getElementById('add-product-form').reset();
+            document.getElementById('image-preview').src = 'https://via.placeholder.com/150';
+            // Refresh products display
+            displayProducts(document.getElementById('category-filter').value);
+            showToast('Product Added', `${name} has been successfully added.`);
+        })
+        .catch(error => {
+            console.error(error);
+            alert('There was an error adding the product.');
+        });
     }
 });
 
@@ -330,7 +328,7 @@ function openEditModal(productId) {
     // Populate form fields
     document.getElementById('edit-product-id').value = product.id;
     document.getElementById('edit-product-name').value = product.name;
-    document.getElementById('edit-product-category').value = product.category;
+    document.getElementById('edit-product-category').value = product.category_id;
     document.getElementById('edit-product-price').value = product.price;
     document.getElementById('edit-product-description').value = product.description;
     document.getElementById('edit-product-stock').value = product.stock || 0;
@@ -346,14 +344,152 @@ function openEditModal(productId) {
     editModal.show();
 }
 
-// Update product
+// Update product using API
 document.getElementById('update-product-btn').addEventListener('click', function() {
     const id = parseInt(document.getElementById('edit-product-id').value);
     const name = document.getElementById('edit-product-name').value.trim();
-    const category = document.getElementById('edit-product-category').value;
+    const category_id = parseInt(document.getElementById('edit-product-category').value);
     const price = parseFloat(document.getElementById('edit-product-price').value);
     const description = document.getElementById('edit-product-description').value.trim();
     const stock = parseInt(document.getElementById('edit-product-stock').value);
     const sku = document.getElementById('edit-product-sku').value.trim();
     const featured = document.getElementById('edit-product-featured').checked;
     const active = document.getElementById('edit-product-active').checked;
+    let imageUrl = document.getElementById('edit-image-preview').src;
+    const imageInput = document.getElementById('edit-product-image');
+    
+    if (imageInput.files && imageInput.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imageUrl = e.target.result;
+            completeUpdateProduct(imageUrl);
+        };
+        reader.readAsDataURL(imageInput.files[0]);
+    } else {
+        completeUpdateProduct(imageUrl);
+    }
+
+    function completeUpdateProduct(updatedImageUrl) {
+        const updatedProduct = {
+            name,
+            category_id,
+            price,
+            description,
+            stock,
+            sku,
+            featured,
+            active,
+            image: updatedImageUrl
+        };
+        // PUT update to API
+        fetch(`http://localhost:5000/api/products/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedProduct)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error updating product');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Update the local products array
+            const productIndex = products.findIndex(p => p.id === id);
+            if (productIndex !== -1) {
+                products[productIndex] = data;
+            }
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editProductModal'));
+            modal.hide();
+            document.getElementById('edit-product-form').reset();
+            displayProducts(document.getElementById('category-filter').value);
+            showToast('Product Updated', `${name} has been successfully updated.`);
+        })
+        .catch(error => {
+            console.error(error);
+            alert('There was an error updating the product.');
+        });
+    }
+});
+
+// Open delete product modal  
+function openDeleteModal(productId) {
+    selectedProductId = productId;
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    
+    document.getElementById('delete-product-name').textContent = product.name;
+    
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteProductModal'));
+    deleteModal.show();
+}
+
+// Delete product using API – Call DELETE when user confirms deletion
+function deleteProduct() {
+    if (!selectedProductId) return;
+    fetch(`http://localhost:5000/api/products/${selectedProductId}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error deleting product');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Remove deleted product from local array
+        products = products.filter(p => p.id !== selectedProductId);
+        // Close delete modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('deleteProductModal'));
+        modal.hide();
+        displayProducts(document.getElementById('category-filter').value);
+        showToast('Product Deleted', 'Product has been successfully deleted.');
+    })
+    .catch(error => {
+        console.error(error);
+        alert('There was an error deleting the product.');
+    });
+}
+
+// In your delete modal, bind the deleteProduct() function to the confirm button
+document.getElementById('confirm-delete-btn').addEventListener('click', deleteProduct);
+
+function showToast(title, message) {
+    // Create a toast container if it doesn't exist
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        container.style.position = 'fixed';
+        container.style.top = '1rem';
+        container.style.right = '1rem';
+        container.style.zIndex = '1055';
+        document.body.appendChild(container);
+    }
+    
+    // Create a unique ID for the toast
+    const toastId = 'toast-' + Date.now();
+    
+    // Append the toast element to the container
+    container.innerHTML += `
+        <div id="${toastId}" class="toast align-items-center text-bg-primary border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong>${title}</strong><br>${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+    
+    // Initialize and show the toast using Bootstrap's Toast class
+    const toastElement = document.getElementById(toastId);
+    const bsToast = new bootstrap.Toast(toastElement);
+    bsToast.show();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    fetchProducts();
+});

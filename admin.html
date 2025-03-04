@@ -24,40 +24,17 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <div class="container">
-            <a class="navbar-brand" href="index.html"><i class="fas fa-paw me-2"></i>PawsomePets</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="index.html#products">Products</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">About</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="admin.html">Admin</a>
-                    </li>
-                </ul>
-                <div class="d-flex align-items-center">
-                    <span class="text-white me-3">Welcome, Admin</span>
-                    <button class="btn btn-outline-light">Logout</button>
-                </div>
-            </div>
-        </div>
-    </nav>
-
+    <div id="header"></div>
+    <script>
+        console.log('Fetching header.html');
+        fetch('shared/header.html')
+            .then(response => response.text())
+            .then(data => document.getElementById('header').innerHTML = data);
+    </script>
+    
     <!-- Admin Header -->
     <section class="container mt-4 mb-5">
         <div class="row align-items-center">
@@ -124,8 +101,6 @@
                             <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
                         </li>
                         <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
                         <li class="page-item">
                             <a class="page-link" href="#">Next</a>
                         </li>
@@ -186,7 +161,7 @@
                                     <label for="product-image" class="form-label">Product Image</label>
                                     <input type="file" class="form-control" id="product-image" accept="image/*">
                                     <div class="mt-2 text-center">
-                                        <img id="image-preview" src="https://via.placeholder.com/150" class="img-thumbnail" alt="Product image preview">
+                                        <img id="image-preview" src="https://www.hardingtraffic.co.nz/uploaded_files/missing_image.png" class="img-thumbnail" alt="Product image preview">
                                     </div>
                                 </div>
                                 <div class="form-check form-switch mb-3">
@@ -228,12 +203,13 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
+
                                         <label for="edit-product-category" class="form-label">Category</label>
                                         <select class="form-select" id="edit-product-category" required>
                                             <option value="">Select a category</option>
-                                            <option value="food">Food</option>
-                                            <option value="toys">Toys</option>
-                                            <option value="accessories">Accessories</option>
+                                            <option value="1">all</option>
+                                            <option value="2">toys</option>
+                                            <option value="3">clothes</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
@@ -261,7 +237,7 @@
                                     <label for="edit-product-image" class="form-label">Product Image</label>
                                     <input type="file" class="form-control" id="edit-product-image" accept="image/*">
                                     <div class="mt-2 text-center">
-                                        <img id="edit-image-preview" src="https://via.placeholder.com/150" class="img-thumbnail" alt="Product image preview">
+                                        <img id="edit-image-preview" src="https://www.hardingtraffic.co.nz/uploaded_files/missing_image.png" class="img-thumbnail" alt="Product image preview">
                                     </div>
                                 </div>
                                 <div class="form-check form-switch mb-3">
