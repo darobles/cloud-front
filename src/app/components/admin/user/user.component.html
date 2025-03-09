@@ -1,0 +1,48 @@
+<section class="container mt-4 mb-5">
+  <div class="admin-panel">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <input type="text" id="search-users" class="form-control" placeholder="Search users..." [(ngModel)]="searchTerm" (ngModelChange)="filterUsers()">
+      </div>
+      <div class="col-md-6 text-md-end">
+        <button class="btn btn-primary" (click)="openAddUserModal()">Add New User</button>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of filteredUsers">
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+              <button class="btn btn-secondary btn-sm me-1" (click)="openEditUserModal(user)">Edit</button>
+              <button class="btn btn-danger btn-sm" (click)="deleteUser(user)">Delete</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredUsers.length === 0">
+            <td colspan="5" class="text-center">No users found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Edit User Modal -->
+<app-edit-user #editUserModal [user]="selectedUser"></app-edit-user>
+
+<!-- Add User Modal -->
+<app-add-user #addUserModal (userCreated)="showToast()"></app-add-user>
+<app-toast></app-toast>

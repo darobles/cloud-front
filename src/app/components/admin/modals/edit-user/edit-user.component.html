@@ -1,0 +1,65 @@
+<div #editUserModal class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit User - {{ user.name }}</h5>
+        <button type="button" class="btn-close" (click)="close()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label for="edit-user-id" class="form-label">ID</label>
+            <input type="text" id="edit-user-id" class="form-control" [(ngModel)]="user.id" name="id" readonly />
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-username" class="form-label">Username</label>
+            <input type="text" id="edit-user-username" class="form-control" [(ngModel)]="user.username" name="username" />
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-password" class="form-label">Password</label>
+            <input type="password" id="edit-user-password" class="form-control" [(ngModel)]="user.password" name="password" />
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-name" class="form-label">Name</label>
+            <input type="text" id="edit-user-name" class="form-control" [(ngModel)]="user.name" name="name" />
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-email" class="form-label">Email</label>
+            <input type="email" id="edit-user-email" class="form-control" [(ngModel)]="user.email" name="email" />
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-address" class="form-label">Address</label>
+            <input type="text" id="edit-user-address" class="form-control" [(ngModel)]="user.address" name="address" />
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-post" class="form-label">Post</label>
+            <input type="text" id="edit-user-post" class="form-control" [(ngModel)]="user.post" name="post" />
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-city" class="form-label">City</label>
+            <input type="text" id="edit-user-city" class="form-control" [(ngModel)]="user.city" name="city" />
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-country" class="form-label">Country</label>
+            <input type="text" id="edit-user-country" class="form-control" [(ngModel)]="user.country" name="country" />
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-role" class="form-label">Role</label>
+            <select id="edit-user-role" class="form-select" [(ngModel)]="user.role_id" name="role">
+              <option value="1">Admin</option>
+              <option value="2">User</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="edit-user-role-id" class="form-label">Role ID</label>
+            <input type="number" id="edit-user-role-id" class="form-control" [(ngModel)]="user.role_id" name="role_id" />
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="close()">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="updateUser()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,47 @@
+<!-- Filter by Category -->
+<div class="row mb-4 pt-2">
+  <div class="col-md-6">
+      <h2>Featured Products</h2>
+  </div>
+  <div class="col-md-6 text-md-end">
+      <div class="btn-group">
+          <button class="btn btn-outline-primary filter-btn" 
+                  [class.active]="selectedCategory === 'all'" 
+                  (click)="setCategory('all')">All</button>
+          <button class="btn btn-outline-primary filter-btn" 
+                  [class.active]="selectedCategory === 'food'" 
+                  (click)="setCategory('food')">Food</button>
+          <button class="btn btn-outline-primary filter-btn" 
+                  [class.active]="selectedCategory === 'toys'" 
+                  (click)="setCategory('toys')">Toys</button>
+          <button class="btn btn-outline-primary filter-btn" 
+                  [class.active]="selectedCategory === 'accessories'" 
+                  (click)="setCategory('accessories')">Accessories</button>
+          <button class="btn btn-outline-primary filter-btn" 
+                  [class.active]="selectedCategory === 'clothes'" 
+                  (click)="setCategory('clothes')">Clothes</button>
+      
+                </div>
+  </div>
+</div>
+<style>
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+</style>
+
+<!-- Product Grid -->
+<div class="product-grid" [ngStyle]="{'grid-template-columns': 'repeat(4, 1fr)'}">
+  <div class="product-card" *ngFor="let product of filteredProducts">
+    <div class="card">
+      <img class="card-img-top" [src]="product.image" [alt]="product.name" style="max-height: 400px; object-fit: cover;">
+      <div class="card-body">
+        <h5 class="card-title">{{ product.name }}</h5>
+        <p class="card-text">Price: {{ product.price }}</p>
+        <button class="btn btn-primary" (click)="addToCart(product)">Add to Cart</button>
+      </div>
+    </div>
+  </div>
+</div>

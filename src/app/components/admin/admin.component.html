@@ -1,0 +1,100 @@
+<!-- Admin Header -->
+   <section class="container mt-4 mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <h1><i class="fas fa-cogs me-2"></i>Product Administration</h1>
+            <p class="lead">Manage your product inventory</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                <i class="fas fa-plus me-1"></i> Add New Product
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Admin Panel -->
+<section class="container mb-5">
+    <div class="admin-panel">
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <input type="text" id="search-products" class="form-control" placeholder="Search products...">
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-md-end">
+                    <select id="category-filter" class="form-select me-2" style="max-width: 200px;">
+                        <option value="all">All Categories</option>
+                        <option value="food">Food</option>
+                        <option value="toys">Toys</option>
+                        <option value="accessories">Accessories</option>
+                        <option value="clothes">Clothes</option>
+                    </select>
+                    <button id="refresh-products" class="btn btn-outline-secondary">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="product-list">
+                    <tr *ngFor="let product of products">
+                        <td>{{ product.id }}</td>
+                        <td>
+                            <img
+                                [src]="product.image || 'https://www.hardingtraffic.co.nz/uploaded_files/missing_image.png'"
+                                class="img-thumbnail"
+                                style="width:70px; height:70px; object-fit: cover;"
+                                alt="Product image"
+                            />
+                        </td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.category }}</td>
+                        <td>{{ product.price | currency }}</td>
+                        <td>{{ product.stock }}</td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editProductModal" (click)="editProduct(product)">Edit</button>
+                            <button class="btn btn-danger btn-sm" (click)="deleteProduct(product)">Delete</button>
+                        </td>
+                    </tr>
+                    <tr *ngIf="products.length === 0">
+                        <td colspan="7" class="text-center">No products found.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="pagination" class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                <span>Showing <span id="showing-items">0</span> of <span id="total-items">0</span> products</span>
+            </div>
+            <nav aria-label="Product pagination">
+                <ul class="pagination mb-0">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+
+<!-- Place the Edit Product Modal (standalone component) here -->
+<app-edit-product #editModal [product]="selectedProduct"></app-edit-product>
+<app-add-product #addProductModal></app-add-product>

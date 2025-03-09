@@ -1,0 +1,56 @@
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="home"><i class="fas fa-paw me-2"></i>PawsomePets</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/home">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/about" routerLinkActive="active">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="contact" routerLinkActive="active">Contact</a>
+        </li>
+        <li class="nav-item dropdown"  *ngIf="displayAdmin">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Admin
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" routerLink="/admin" routerLinkActive>Products</a></li>
+            <li><a class="dropdown-item" routerLink="/users" routerLinkActive>Users</a></li>
+          </ul>
+        </li>
+      </ul>
+      <div class="d-flex align-items-center">
+        {{ username }}
+        <div class="user-info me-3 text-white fs-5" *ngIf="userLoggedIn">
+          <i class="fas fa-user me-1"></i> {{ username }}
+        </div>
+        
+        <!-- Cart Icon -->
+        <div class="cart-icon me-3 text-white fs-5" id="cart-icon" (click)="triggerCart()">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" id="cart-count">{{ cartCount }}</span>
+        </div>
+        <!-- Login and Register Buttons displayed when not logged in -->
+        <button id="login-button" class="btn btn-outline-light me-2" data-bs-toggle="modal" data-bs-target="#loginModal" *ngIf="!userLoggedIn">
+          Login
+        </button>
+        <button id="logout-button" class="btn btn-outline-light me-2" *ngIf="userLoggedIn" (click)="logout()">
+          Logout
+        </button>
+        <button id="register-button" class="btn btn-primary" (click)="openAddUserModal()" *ngIf="!userLoggedIn">
+          Register
+        </button>
+        <!-- Logout Button (optional) -->
+        <!-- <button id="logout-button" class="btn btn-primary" *ngIf="userLoggedIn">Logout</button> -->
+      </div>
+    </div>
+  </div>
+</nav>
+<app-add-user #addUserModal (userCreated)="showToast()"></app-add-user>
+<app-toast></app-toast>

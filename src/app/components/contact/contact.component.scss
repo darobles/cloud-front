@@ -1,0 +1,47 @@
+/* filepath: c:\Users\admin\Documents\projects\cloud-front\cloud-front\src\app\components\contact\contact.component.scss */
+.container {
+    margin-top: 50px;
+  }
+  
+  h2 {
+    color: #333;
+  }
+  
+  .map-container {
+    margin-top: 20px;
+  }
+  
+  .dachshund-container {
+    text-align: center;
+    margin-top: 20px;
+  
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  
+    p {
+      margin-top: 10px;
+      font-size: 1.1em;
+      color: #555;
+    }
+  }
+  
+  form {
+    .form-label {
+      font-weight: bold;
+    }
+  
+    .form-control {
+      margin-bottom: 15px;
+    }
+  
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+      &:hover {
+        background-color: #0056b3;
+        border-color: #004085;
+      }
+    }
+  }
